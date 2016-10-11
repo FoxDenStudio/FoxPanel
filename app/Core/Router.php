@@ -28,34 +28,49 @@
  * Created by IntelliJ IDEA.
  * User: d4rkfly3r
  * Date: 10/11/2016
- * Time: 11:41 AM
+ * Time: 11:57 AM
  */
 
-define('DS', DIRECTORY_SEPARATOR);
-define('APP_ROOT', dirname(__FILE__) . DS . 'app');
-define('PUBLIC_ROOT', dirname(__FILE__) . DS . 'public');
+namespace Core;
 
-define('DEVELOPMENT_ENVIRONMENT', true);
 
-define('DB_NAME', 'dbname');
-define('DB_USER', 'dbuser');
-define('DB_PASSWORD', 'dbpass');
-define('DB_HOST', 'localhost');
-
-define('PATH', 'http://foxpanel.local/');
-define('WEBSITE_TITLE', 'FoxPanel');
-
-define('DEFAULT_CONTROLLER', 'Index');
-
-$url = isset($_GET['url']) ? $_GET['url'] : 'index';
-
-function __autoload($FQCN)
+class Router
 {
-    if (file_exists(APP_ROOT . DS . $FQCN . '.php')) {
-        require_once(APP_ROOT . DS . $FQCN . '.php');
+
+    public static function route($url)
+    {
+        $url_array = explode("/", $url);
+
+        // The first part of the URL is the controller name
+        $controller = isset($url_array[0]) ? '\\Controllers\\' . ucwords($url_array[0]) : '';
+        array_shift($url_array);
+
+        // The second part is the method name
+        $action = isset($url_array[0]) ? $url_array[0] : '';
+        array_shift($url_array);
+
+        // The third part are the parameters
+        $query_string = $url_array;
+
+        // if controller is empty, redirect to default controller
+        if (empty($controller)) {
+            $controller = \Controllers\default_controller();
+        }
+
+        // if action is empty, redirect to index page
+        if (empty($action)) {
+            $action = 'index';
+        }
+
+//        $controller_name = $controller;
+        $controller = ucwords($controller);
+        $dispatch = new $controller();//new $controller($controller_name, $action);
+
+        if ((int)method_exists($controller, $action)) {
+            call_user_func_array(array($dispatch, $action), $query_string);
+        } else {
+            echo "ERROR!";
+            /* Error Generation Code Here */
+        }
     }
 }
-
-use Core\Router;
-
-Router::route($url);
