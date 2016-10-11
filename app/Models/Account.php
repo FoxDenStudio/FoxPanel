@@ -28,32 +28,26 @@
  * Created by IntelliJ IDEA.
  * User: d4rkfly3r
  * Date: 10/11/2016
- * Time: 12:33 PM
+ * Time: 3:38 PM
  */
 
-namespace Views;
+namespace Models;
 
 
-class View
+class Account extends Model
 {
-    protected $data = array();
-
-    function __construct()
+    function test()
     {
+        $data = [
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'password' => $this->db->func('SHA1(?)', ["secretpassword+salt"]),
+        ];
+        $id = $this->db->insert('testTable', $data);
+        if ($id)
+            echo 'user was created. Id=' . $id;
+        else
+            echo 'insert failed: ' . $this->db->getLastError();
 
-    }
-
-    function set($name, $value)
-    {
-        $this->data[$name] = $value;
-    }
-
-    function render($viewName)
-    {
-        if (file_exists(PUBLIC_ROOT . DS . 'views' . DS . $viewName . '.php')) {
-            include(PUBLIC_ROOT . DS . 'views' . DS . $viewName . '.php');
-        } else {
-            throw new \Exception('Could not render file for view: ' . $viewName);
-        }
     }
 }

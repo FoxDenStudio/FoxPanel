@@ -44,6 +44,9 @@ class Account extends Controller
 
     function index()
     {
+//        $this->loadModel('Account');
+//        $model = $this->getModel('Account');
+//        $model->test();
         $this->getView()->set("username", "d4rkfly3r");
         $this->getView()->render('account/index');
     }

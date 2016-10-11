@@ -49,6 +49,16 @@ abstract class Controller
         $this->view = new \Views\View();
     }
 
+    protected function getOrLoadModel($model)
+    {
+        if (is_object($this->models[$model])) {
+            return $this->models[$model];
+        } else {
+            $this->loadModel($model);
+            return $this->models[$model];
+        }
+    }
+
     protected function loadModel($model)
     {
         $model = '\\Models\\' . $model;
@@ -59,6 +69,7 @@ abstract class Controller
 
     protected function getModel($model)
     {
+        $model = '\\Models\\' . $model;
         if (is_object($this->models[$model])) {
             return $this->models[$model];
         } else {
@@ -86,7 +97,7 @@ abstract class Controller
 
     private function stripSlashesDeep($value)
     {
-        $value = is_array($value) ? array_map(array($this, 'stripSlashesDeep'), $value) : stripslashes($value);
+        $value = is_array($value) ? array_map([$this, 'stripSlashesDeep'], $value) : stripslashes($value);
         return $value;
     }
 
@@ -102,7 +113,7 @@ abstract class Controller
     private function unregisterGlobals()
     {
         if (ini_get('register_globals')) {
-            $array = array('_SESSION', '_POST', '_GET', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES');
+            $array = ['_SESSION', '_POST', '_GET', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES'];
             foreach ($array as $value) {
                 foreach ($GLOBALS[$value] as $key => $var) {
                     if ($var === $GLOBALS[$key]) {

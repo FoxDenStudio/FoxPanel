@@ -34,13 +34,13 @@
 namespace Models;
 
 
-class Model
+abstract class Model
 {
 
     protected $db;
 
     public function __construct()
     {
-        $db = new \Core\Database();
+        $this->db = new \Core\Database();
     }
 }
