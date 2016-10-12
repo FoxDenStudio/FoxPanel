@@ -28,36 +28,13 @@
  * Created by IntelliJ IDEA.
  * User: d4rkfly3r
  * Date: 10/11/2016
- * Time: 11:41 AM
+ * Time: 9:02 PM
  */
 
-define('DS', DIRECTORY_SEPARATOR);
-define('APP_ROOT', dirname(__FILE__) . DS . 'app');
-define('PUBLIC_ROOT', dirname(__FILE__) . DS . 'public');
+namespace Core;
 
-define('DEVELOPMENT_ENVIRONMENT', true);
 
-define('DB_HOST', 'localhost');
-define('DB_PORT', '3306');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
-define('DB_NAME', 'FoxPanel');
-define('DB_CHARSET', 'utf-8');
-
-define('PATH', 'http://foxpanel.local/');
-define('WEBSITE_TITLE', 'FoxPanel');
-
-define('DEFAULT_CONTROLLER', 'Home');
-
-$url = isset($_GET['url']) ? $_GET['url'] : 'home';
-
-function __autoload($FQCN)
+class Utils
 {
-    if (file_exists(APP_ROOT . DS . $FQCN . '.php')) {
-        require_once(APP_ROOT . DS . $FQCN . '.php');
-    }
+
 }
-
-use Core\Router;
-
-Router::route($url);

@@ -34,11 +34,12 @@
 namespace Controllers;
 
 
-class Index extends Controller
+class Home extends Controller
 {
 
     function index()
     {
-        echo "IndexDef";
+        $this->view->set('title', 'Home');
+        $this->view->render('home/index');
     }
 }

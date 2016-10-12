@@ -24,9 +24,38 @@
   ~
   -->
 
-<html lang="en">
+<html class="no-js" lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>FoxPanel | Account</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoxPanel | <?= $this->data['title'] ?></title>
+
+    <link rel="stylesheet" href="public/css/foundation.css">
+    <link rel="stylesheet" href="public/css/app.css">
+    <link rel="stylesheet" href="public/css/foundation-icons.css">
 </head>
 <body>
+<div class="row">
+    <div class="large-12 columns">
+        <div class="top-bar">
+            <div class="top-bar-title">
+                <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+                    <button class="menu-icon" type="button" data-toggle></button>
+                </span>
+                <span class="title">FoxPanel</span>
+            </div>
+            <div id="responsive-menu">
+                <div class="top-bar-right">
+                    <ul class="dropdown menu" data-dropdown-menu>
+                        <li><a href="#">One</a></li>
+                        <li><a href="#">Two</a></li>
+                        <li><a href="#">Three</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="content">
