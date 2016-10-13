@@ -24,36 +24,45 @@
  *
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 12:33 PM
- */
+namespace Core;
 
-namespace Views;
-
-
-class View
+class Error extends Controller
 {
-    protected $data = array();
+    private $error = null;
 
-    function __construct()
+    public function __construct($error)
     {
-
+        parent::__construct();
+        $this->error = $error;
     }
 
-    function set($name, $value)
+    public static function display($error, $class = 'alert alert-danger')
     {
-        $this->data[$name] = $value;
-    }
+        $row = '';
+        if (is_array($error)) {
+            foreach ($error as $error) {
+                $row .= "<div class='$class'>$error</div>";
+            }
 
-    function render($viewName)
-    {
-        if (file_exists(PUBLIC_ROOT . DS . 'views' . DS . $viewName . '.php')) {
-            include(PUBLIC_ROOT . DS . 'views' . DS . $viewName . '.php');
+            return $row;
         } else {
-            throw new \Exception('Could not render file for view: ' . $viewName);
+            if (isset($error)) {
+                return "<div class='$class'>$error</div>";
+            }
         }
+    }
+
+    public function index()
+    {
+        header('HTTP/1.0 404 Not Found');
+
+        $data['title'] = '404';
+        $data['error'] = $this->error;
+        $this->view->set('title', '404');
+        $this->view->set('error', $this->error);
+
+        $this->view->renderTemplate('header');
+        $this->view->render('error/404');
+        $this->view->renderTemplate('footer');
     }
 }

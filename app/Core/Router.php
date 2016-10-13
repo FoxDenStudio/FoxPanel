@@ -24,53 +24,142 @@
  *
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 11:57 AM
- */
-
 namespace Core;
-
 
 class Router
 {
+    public static $routes = [];
 
-    public static function route($url)
+    public static $methods = [];
+
+    public static $callbacks = [];
+
+    public static $errorCallback;
+
+    /** Set route patterns */
+    public static $patterns = [
+        ':any' => '[^/]+',
+        ':num' => '-?[0-9]+',
+        ':all' => '.*',
+        ':hex' => '[[:xdigit:]]+',
+        ':uuidV4' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}',
+    ];
+
+    public static function __callstatic($method, $params)
     {
-        $url_array = explode("/", $url);
+        $uri = dirname($_SERVER['PHP_SELF']) . '/' . $params[0];
+        $callback = $params[1];
 
-        // The first part of the URL is the controller name
-        $controller = isset($url_array[0]) ? '\\Controllers\\' . ucwords($url_array[0]) : '';
-        array_shift($url_array);
+        array_push(self::$routes, $uri);
+        array_push(self::$methods, strtoupper($method));
+        array_push(self::$callbacks, $callback);
+    }
 
-        // The second part is the method name
-        $action = isset($url_array[0]) ? $url_array[0] : '';
-        array_shift($url_array);
+    public static function error($callback)
+    {
+        self::$errorCallback = $callback;
+    }
 
-        // The third part are the parameters
-        $query_string = $url_array;
+    public static function dispatch()
+    {
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $method = $_SERVER['REQUEST_METHOD'];
 
-        // if controller is empty, redirect to default controller
-        if (empty($controller)) {
-            $controller = \Controllers\default_controller();
+        $searches = array_keys(static::$patterns);
+        $replaces = array_values(static::$patterns);
+
+        self::$routes = str_replace('//', '/', self::$routes);
+
+        $query = '';
+        $q_arr = [];
+        if (strpos($uri, '&') > 0) {
+            $query = substr($uri, strpos($uri, '&') + 1);
+            $uri = substr($uri, 0, strpos($uri, '&'));
+            $q_arr = explode('&', $query);
+            foreach ($q_arr as $q) {
+                $qobj = explode('=', $q);
+                $q_arr[] = [$qobj[0] => $qobj[1]];
+                if (!isset($_GET[$qobj[0]])) {
+                    $_GET[$qobj[0]] = $qobj[1];
+                }
+            }
         }
 
-        // if action is empty, redirect to index page
-        if (empty($action)) {
-            $action = 'index';
-        }
-
-//        $controller_name = $controller;
-        $controller = ucwords($controller);
-        $dispatch = new $controller();//new $controller($controller_name, $action);
-
-        if ((int)method_exists($controller, $action)) {
-            call_user_func_array(array($dispatch, $action), $query_string);
+        if (in_array($uri, self::$routes)) {
+            $route_pos = array_keys(self::$routes, $uri);
+            foreach ($route_pos as $route) {
+                if (self::$methods[$route] == $method || self::$methods[$route] == 'ANY') {
+                    if (!is_object(self::$callbacks[$route])) {
+                        self::invokeObject(self::$callbacks[$route]);
+                        return;
+                    } else {
+                        call_user_func(self::$callbacks[$route]);
+                        return;
+                    }
+                }
+            }
         } else {
-            echo "ERROR!";
-            /* Error Generation Code Here */
+            $pos = 0;
+
+            foreach (self::$routes as $route) {
+                $route = str_replace('//', '/', $route);
+
+                if (strpos($route, ':') !== false) {
+                    $route = str_replace($searches, $replaces, $route);
+                }
+
+                if (preg_match('#^' . $route . '$#', $uri, $matched)) {
+                    if (self::$methods[$pos] == $method || self::$methods[$pos] == 'ANY') {
+
+                        array_shift($matched);
+
+                        if (!is_object(self::$callbacks[$pos])) {
+                            self::invokeObject(self::$callbacks[$pos], $matched);
+                            return;
+                        } else {
+                            call_user_func_array(self::$callbacks[$pos], $matched);
+                            return;
+                        }
+                    }
+                }
+                $pos++;
+            }
         }
+
+        if (!self::$errorCallback) {
+            self::$errorCallback = function () {
+                header("{$_SERVER['SERVER_PROTOCOL']} 404 Not Found");
+
+                $data['title'] = '404';
+                $data['error'] = 'Oops! Page not found..';
+                $view = new View();
+                $view->renderTemplate('header', $data);
+                $view->render('Error/404', $data);
+                $view->renderTemplate('footer', $data);
+            };
+        }
+        if (!is_object(self::$errorCallback)) {
+            self::invokeObject(self::$errorCallback, null, 'No routes found.');
+            return;
+        } else {
+            call_user_func(self::$errorCallback);
+            return;
+        }
+
+    }
+
+    public static function invokeObject($callback, $matched = null, $msg = null)
+    {
+        $last = explode('/', $callback);
+        $last = end($last);
+
+        $segments = explode('@', $last);
+
+        $controller = $segments[0];
+        $method = $segments[1];
+
+        $controller = new $controller($msg);
+
+        call_user_func_array([$controller, $method], $matched ? $matched : []);
     }
 }

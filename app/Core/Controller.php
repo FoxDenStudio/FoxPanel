@@ -24,17 +24,15 @@
  *
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 9:02 PM
- */
-
 namespace Core;
 
-
-class Utils
+abstract class Controller
 {
+    public $view;
 
+    public function __construct()
+    {
+        /* initialise the views object */
+        $this->view = new View();
+    }
 }

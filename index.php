@@ -1,63 +1,73 @@
 <?php
 /**
- * This file is part of FoxPanel, licensed under the MIT License
+ * SimpleMVC specifed directory default is '.'
+ * If app folder is not in the same directory update it's path.
+ */
+$relDir = '.';
+
+/* Set the full path to the docroot */
+define('ROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+
+/* Make the application relative to the docroot, for symlink'd index.php */
+if (!is_dir($relDir) and is_dir(ROOT . $relDir)) {
+    $relDir = ROOT . $relDir;
+}
+
+/* Define the absolute paths for configured directories */
+define('ROOT_DIR', realpath($relDir) . DIRECTORY_SEPARATOR);
+
+/* Unset non used variables */
+unset($relDir);
+
+/* load composer autoloader */
+require ROOT_DIR . 'vendor/autoload.php';
+
+if (!is_readable(ROOT_DIR . 'app/Core/Config.php')) {
+    die('No Config.php found, configure and rename Config.example.php to Config.php in app/Core.');
+}
+
+/*
+ *---------------------------------------------------------------
+ * APPLICATION ENVIRONMENT
+ *---------------------------------------------------------------
  *
- * Copyright (c) 2016. FoxDenStudio - http://foxdenstudio.net/
+ * You can load different configurations depending on your
+ * current environment. Setting the environment also influences
+ * things like logging and error reporting.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This can be set to anything, but default usage is:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     development
+ *     production
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * NOTE: If you change these, also change the error_reporting() code below
  *
  */
-
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 11:41 AM
+define('ENVIRONMENT', 'development');
+/*
+ *---------------------------------------------------------------
+ * ERROR REPORTING
+ *---------------------------------------------------------------
+ *
+ * Different environments will require different levels of error reporting.
+ * By default development will show errors but production will hide them.
  */
 
-define('DS', DIRECTORY_SEPARATOR);
-define('APP_ROOT', dirname(__FILE__) . DS . 'app');
-define('PUBLIC_ROOT', dirname(__FILE__) . DS . 'public');
-
-define('DEVELOPMENT_ENVIRONMENT', true);
-
-define('DB_HOST', 'localhost');
-define('DB_PORT', '3306');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
-define('DB_NAME', 'FoxPanel');
-define('DB_CHARSET', 'utf-8');
-
-define('PATH', 'http://foxpanel.local/');
-define('WEBSITE_TITLE', 'FoxPanel');
-
-define('DEFAULT_CONTROLLER', 'Home');
-
-$url = isset($_GET['url']) ? $_GET['url'] : 'home';
-
-function __autoload($FQCN)
-{
-    if (file_exists(APP_ROOT . DS . $FQCN . '.php')) {
-        require_once(APP_ROOT . DS . $FQCN . '.php');
+if (defined('ENVIRONMENT')) {
+    switch (ENVIRONMENT) {
+        case 'development':
+            error_reporting(E_ALL);
+            break;
+        case 'production':
+            error_reporting(0);
+            break;
+        default:
+            exit('The application environment is not set correctly.');
     }
 }
 
-use Core\Router;
+/* initiate config */
+new Core\Config();
 
-Router::route($url);
+/** load routes */
+require ROOT_DIR . 'routes.php';

@@ -24,16 +24,26 @@
  *
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 12:49 PM
- */
-$this->render('includes/header');
-?>
+namespace Helpers;
 
-    <h2>Account!</h2>
+class Utils
+{
+    public static function pr($data)
+    {
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
+    }
 
-<?php
-$this->render('includes/footer');
+    public static function create_key($length = 32)
+    {
+        $chars = '!@#$%^&*()_+-=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+        $key = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $key .= $chars{rand(0, strlen($chars) - 1)};
+        }
+
+        return $key;
+    }
+}

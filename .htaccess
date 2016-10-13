@@ -1,6 +1,23 @@
-RewriteEngine on
-RewriteBase /
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond $1 !^(images|photos|css|js|robots\.txt)
-RewriteRule ^(.*)$ /index.php?url=$1 [L]
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+
+	RewriteEngine On
+	RewriteBase /
+
+	# Force to exclude the trailing slash
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_URI} (.*)/$
+	RewriteRule ^(.+)/$ $1 [R=307,L]
+
+	# Restrict php files direct access
+	RewriteCond %{THE_REQUEST} ^.+?\ [^?]+\.php[?\ ]
+	RewriteRule \.php$ - [F]
+
+	# Allow any files or directories that exist to be displayed directly
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+
+	RewriteRule ^(.*)$ index.php?$1 [QSA,L]
+
+</IfModule>

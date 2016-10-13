@@ -23,31 +23,24 @@
  * SOFTWARE.
  *
  */
+namespace Controllers;
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 3:38 PM
- */
+use Core\Controller;
 
-namespace Models;
-
-
-class Account extends Model
+class Details extends Controller
 {
-    function test()
+    public function __construct()
     {
-        $data = [
-            'firstName' => 'John',
-            'lastName' => 'Doe',
-            'password' => $this->db->func('SHA1(?)', ["secretpassword+salt"]),
-        ];
-        $id = $this->db->insert('testTable', $data);
-        if ($id)
-            echo 'user was created. Id=' . $id;
-        else
-            echo 'insert failed: ' . $this->db->getLastError();
+        parent::__construct();
+    }
 
+    public function index($uuid)
+    {
+        $this->view->set('title', 'Home');
+        $this->view->set('serverUUID', $uuid);
+
+        $this->view->renderTemplate('header');
+        $this->view->render('details/index');
+        $this->view->renderTemplate('footer');
     }
 }

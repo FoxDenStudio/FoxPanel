@@ -31,7 +31,7 @@
  * Time: 11:57 AM
  */
 
-namespace Core;
+namespace Helpers;
 
 
 class Database

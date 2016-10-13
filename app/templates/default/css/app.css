@@ -27,6 +27,37 @@ body {
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3)), url('https://originalmockups.com/thumbs/infinity-mockup-bundle-cover@2x-e835c6971edfad6286233db95569e4b0.jpg') fixed center center;
 }
 
+.chat-message-area {
+    line-height: 1.5; /* fallback */
+    max-height: 30em; /* fallback */
+    overflow: auto;
+    font-size: small;
+}
+
+.chat-message {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.47);
+}
+
+table thead, table tbody, table tfoot {
+    border: 1px solid #0a0a0a;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: rgba(27, 27, 27, 0.91);
+}
+
+table tbody tr:nth-child(even) {
+    background-color: rgba(16, 16, 16, 0.91);
+}
+
+table tbody tr:nth-child(odd):hover {
+    background-color: rgba(21, 21, 21, 0.91);
+}
+
+table.hover tr:nth-of-type(even):hover {
+    background-color: rgba(11, 11, 11, 0.91);
+}
+
 .left-tag {
     line-height: 39px;
 }
@@ -45,7 +76,7 @@ body {
 }
 
 .content {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.3);
     overflow: auto;
     position: absolute;
     top: 55px;
@@ -91,7 +122,7 @@ body {
 
 @media screen and (max-width: 39.9375em) {
     .title {
-        font-size: 1.1875rem;
+        font-size: 1.9rem;
         font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
         font-weight: normal;
         font-style: normal;
@@ -107,12 +138,6 @@ body {
         width: 20px;
         height: 16px;
     }
-}
-
-hr {
-    max-width: 100%;
-    margin: 0;
-    border-bottom-color: #0a0a0a;
 }
 
 .fade-in {

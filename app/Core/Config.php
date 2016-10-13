@@ -23,31 +23,40 @@
  * SOFTWARE.
  *
  */
+namespace Core;
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 12:23 PM
- */
+use Helpers\Session;
 
-namespace Controllers;
-
-
-class Account extends Controller
+class Config
 {
-    function login($test)
+    public function __construct()
     {
-//        echo '<br />' . $test . '<br />';
-//        print_r(func_get_args());
-    }
+        ob_start();
 
-    function index()
-    {
-//        $this->loadModel('Account');
-//        $model = $this->getModel('Account');
-//        $model->test();
-        $this->getView()->set("username", "d4rkfly3r");
-        $this->getView()->render('account/index');
+        define('DIR', '/');
+
+        define('DEFAULT_CONTROLLER', 'welcome');
+        define('DEFAULT_METHOD', 'index');
+
+        define('TEMPLATE', 'default');
+
+
+        define('DB_HOST', 'localhost');
+        define('DB_PORT', '3306');
+        define('DB_USER', 'root');
+        define('DB_PASSWORD', '');
+        define('DB_NAME', 'FoxPanel');
+        define('DB_CHARSET', 'utf-8');
+
+
+        define('PATH', 'http://foxpanel.local/');
+        define('WEBSITE_TITLE', 'FoxPanel');
+
+        define('SESSION_PREFIX', 'fp');
+
+        set_exception_handler('Core\Logger::ExceptionHandler');
+        set_error_handler('Core\Logger::ErrorHandler');
+
+        Session::init();
     }
 }

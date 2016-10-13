@@ -24,22 +24,16 @@
  *
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 12:21 PM
- */
+namespace Core;
 
-namespace Controllers;
+use Helpers\Database;
 
-
-class Home extends Controller
+abstract class Model
 {
+    protected $db;
 
-    function index()
+    public function __construct()
     {
-        $this->view->set('title', 'Home');
-        $this->view->render('home/index');
+        $this->db = new Database();
     }
 }

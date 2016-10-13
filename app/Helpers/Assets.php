@@ -24,23 +24,36 @@
  *
  */
 
-/**
- * Created by IntelliJ IDEA.
- * User: d4rkfly3r
- * Date: 10/11/2016
- * Time: 12:33 PM
- */
+namespace Helpers;
 
-namespace Models;
-
-
-abstract class Model
+class Assets
 {
+    protected static $templates =
+        [
+            'js' => '<script src="%s" type="text/javascript"></script>',
+            'css' => '<link href="%s" rel="stylesheet" type="text/css">',
+        ];
 
-    protected $db;
-
-    public function __construct()
+    public static function js($files)
     {
-        $this->db = new \Core\Database();
+        static::resource($files, 'js');
+    }
+
+    protected static function resource($files, $template)
+    {
+        $template = self::$templates[$template];
+
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                echo sprintf($template, $file) . "\n";
+            }
+        } else {
+            echo sprintf($template, $files) . "\n";
+        }
+    }
+
+    public static function css($files)
+    {
+        static::resource($files, 'css');
     }
 }
